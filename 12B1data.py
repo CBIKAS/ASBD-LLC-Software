@@ -1,16 +1,22 @@
 import duckdb
+from pathlib import Path
 
 # Create a DuckDB connection
 conn = duckdb.connect()
 
-# Read the CSV file into a table named 'sales_data'
-conn.execute("CREATE TABLE sales_data AS SELECT * FROM 'DTCCRC8.A0597.csv'")
+# Clean the raw CSV text so fields like ="001" become "001"
+csv_path = Path('DTCCRC8.A0597.csv')
+
+conn.execute(f"""
+CREATE TABLE sales_data AS SELECT * FROM read_csv_auto('{csv_path}', HEADER=TRUE, DELIM=',', QUOTE='"', STRICT_MODE=FALSE)
+""")
 
 # Group the data by product_category and calculate the total sales
 query = """
-SELECT RepNumber, Round(SUM(CommissionAmount),2) AS total_sales
+SELECT Replace(Replace(RepNumber, '"', ''), '=', '') AS RepNumber, Round(SUM(CAST(CommissionAmount AS DOUBLE)),2) AS total_sales
 FROM sales_data
 GROUP BY RepNumber
+ORDER BY RepNumber
 """
 
 # Execute the query and fetch the results
@@ -22,7 +28,7 @@ for row in results:
 
 # Group the data by product_category and calculate the total sales
 query = """
-SELECT Round(SUM(CommissionAmount), 2) AS total_sales
+SELECT Round(SUM(CAST(CommissionAmount AS DOUBLE)), 2) AS total_sales
 FROM sales_data
 """
 
