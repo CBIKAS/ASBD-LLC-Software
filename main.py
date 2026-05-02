@@ -23,6 +23,14 @@ if st.button("Submit"):
             else:
                 df = report.get_rep_commissions(conn, True)
                 st.write("Aggregated commissions by RepNumber:")
-                st.dataframe(df)
+                st.dataframe(
+                    df,
+                    hide_index=True,
+                    column_config={
+                        "CommissionAmount": st.column_config.NumberColumn(
+                            format="$ %.2f"
+                        )
+                    }
+                )
         finally:
             conn.close()

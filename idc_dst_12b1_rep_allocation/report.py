@@ -69,7 +69,9 @@ def get_rep_commissions(conn: duckdb.DuckDBPyConnection, include_total: bool = F
     Requires `sales_data` to exist in the connection.
     """
     query = """
-    SELECT RepNumber, ROUND(SUM(CAST(CommissionAmount AS DOUBLE)), 2) AS CommissionAmount
+    SELECT
+        Replace(Replace(RepNumber, '"', ''), '=', '') AS RepNumber,
+        ROUND(SUM(CAST(CommissionAmount AS DOUBLE)), 2) AS CommissionAmount
     FROM sales_data
     GROUP BY RepNumber
     ORDER BY RepNumber
