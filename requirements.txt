@@ -4,6 +4,7 @@ cffi==1.17.1
 charset-normalizer==3.4.2
 curl_cffi==0.10.0
 duckdb==1.2.1
+streamlit==1.52.2
 frozendict==2.4.6
 idna==3.10
 multitasking==0.0.11
