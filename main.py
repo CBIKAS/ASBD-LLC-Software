@@ -33,6 +33,9 @@ if st.button("Submit"):
                     }
                 )
                 payout_date = report.get_trailer_payout_date_display(conn)
-                st.write(f"Data date: {payout_date}")
+                st.markdown(
+                    f"<div style='text-align: right;'>Data date: {payout_date}</div>",
+                    unsafe_allow_html=True,
+                )
         finally:
             conn.close()
