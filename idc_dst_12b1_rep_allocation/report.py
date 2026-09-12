@@ -37,7 +37,7 @@ def validate_sales_data(conn: duckdb.DuckDBPyConnection, minimum_rows_expected: 
         return errors
 
     column_names = [col[1] for col in table_info]
-    required = {"RepNumber", "CommissionAmount"}
+    required = {"RepNumber", "CommissionAmount", "TrailerPayoutDate"}
     missing = required - set(column_names)
     if missing:
         errors.append(f"Missing required columns: {', '.join(sorted(missing))}")
@@ -60,7 +60,30 @@ def validate_sales_data(conn: duckdb.DuckDBPyConnection, minimum_rows_expected: 
     if non_numeric > 0:
         errors.append(f"Non-numeric CommissionAmount count: {non_numeric}")
 
+    if "TrailerPayoutDate" in column_names:
+        invalid_dates = conn.execute("""
+            SELECT COUNT(*)
+            FROM sales_data
+            WHERE TRY_STRPTIME(CAST(TrailerPayoutDate AS VARCHAR), '%Y%m%d') IS NULL
+        """).fetchone()
+        invalid_date_count = int(invalid_dates[0]) if invalid_dates else 0
+        if invalid_date_count > 0:
+            errors.append(f"Invalid TrailerPayoutDate count: {invalid_date_count}")
+
     return errors
+
+
+def get_trailer_payout_date_display(conn: duckdb.DuckDBPyConnection) -> str:
+    """Return one payout date or the source dates' minimum-to-maximum range."""
+    rows = conn.execute("""
+        SELECT DISTINCT CAST(TrailerPayoutDate AS VARCHAR) AS payout_date
+        FROM sales_data
+        ORDER BY payout_date
+    """).fetchall()
+    dates = [row[0] for row in rows]
+    if len(dates) <= 1:
+        return dates[0] if dates else ""
+    return f"{dates[0]} - {dates[-1]}"
 
 
 def get_rep_commissions(conn: duckdb.DuckDBPyConnection, include_total: bool = False) -> pd.DataFrame:

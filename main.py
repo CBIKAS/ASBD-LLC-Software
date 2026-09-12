@@ -32,5 +32,7 @@ if st.button("Submit"):
                         )
                     }
                 )
+                payout_date = report.get_trailer_payout_date_display(conn)
+                st.write(f"Data date: {payout_date}")
         finally:
             conn.close()

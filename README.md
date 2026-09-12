@@ -17,11 +17,11 @@ Requires Python 3.8+ (or compatible) and the packages listed in `requirements.tx
 Upload a CSV with at least the following columns:
 
 ```
-RepNumber,CommissionAmount
-12345,250.00
+RepNumber,CommissionAmount,TrailerPayoutDate
+12345,250.00,20260102
 ```
 
-Commission values should be numeric. The app will validate rows and display errors if present.
+Commission values should be numeric, and `TrailerPayoutDate` should use the `YYYYMMdd` format. The app validates these values and shows the data date beneath the total row.
 
 ## Run
 
