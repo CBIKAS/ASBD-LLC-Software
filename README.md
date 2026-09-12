@@ -1,6 +1,6 @@
-# 12B1 Rep Allocation Streamlit App
+# ASBD CSV Tools Streamlit App
 
-This Streamlit app aggregates commission amounts by representative (RepNumber) for 12b-1 rep allocation reporting. It validates uploaded sales data and shows aggregated commissions per rep.
+This Streamlit app provides two upload-driven tools: 12b-1 representative commission allocation and 529 account filtering.
 
 ## Requirements
 
@@ -33,12 +33,14 @@ Open the URL shown in the terminal to view the app.
 
 ## Usage
 
-- In the app choose a CSV file to upload.
-- Click **Submit**. If no file is uploaded, the app shows an error.
-- The app uses an in-memory DuckDB connection and the `idc_dst_12b1_rep_allocation.report` module to:
+- Choose **12B-1 Report** or **529 Calculator** from the toolbar at the top of the page.
+- Upload one or more CSV files and process them in the selected tool.
+- The 12B-1 report uses an in-memory DuckDB connection and the `idc_dst_12b1_rep_allocation.report` module to:
   - load the uploaded sales data
   - validate the data (shows validation errors if any)
   - compute aggregated commissions by `RepNumber` and display them as a table
+- The 529 Calculator filters rows where `SocialCode` is `529`, keeps the calculator columns from `529Calculator.py`, adds numeric totals, and provides a CSV download.
+- Uploaded files are processed in memory; the app does not require a server-side input folder.
 
 ## Developer notes
 
